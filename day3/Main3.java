@@ -24,7 +24,19 @@ public class Main3 {
             
             Set<Coord> crosses = wire1.stream().distinct().filter(wire2::contains).collect(Collectors.toSet());
             
-            //Get max distance crossing
+            //p2
+            int min = Integer.MAX_VALUE;
+            
+            for(Coord cross : crosses) {
+            	
+            	int distance = wire1.indexOf(cross) + wire2.indexOf(cross) + 2;	//Add 2, for index offset -> index 0 is really 1 distance away
+            	if(distance < min) min = distance;
+            }
+            
+            System.out.println(min);
+            
+            /*//p1
+            //Get min distance crossing
             int min = Integer.MAX_VALUE;
             
             for(Coord c : crosses) {
@@ -33,7 +45,7 @@ public class Main3 {
             	}
             }
             
-            System.out.println(min);
+            System.out.println(min);*/
             
         } catch(Exception e) {
             System.out.println(e.getMessage());
