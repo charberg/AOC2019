@@ -71,6 +71,60 @@ public class Computer {
 				i = i+2;
 			} 
 			
+			//Opcode 5: jump if true
+			
+			else if(opCode == 5) {
+				Integer p1 = params[2] == 0 ? mem[mem[i+1]] : mem[i+1];
+				Integer p2 = params[1] == 0 ? mem[mem[i+2]] : mem[i+2];
+				if(!p1.equals(Integer.valueOf(0))) {
+					i = p2;
+				} else {
+					i = i+3;
+				}
+			} 
+			
+			//Opcode 6: jump if false
+			
+			else if(opCode == 6) {
+				Integer p1 = params[2] == 0 ? mem[mem[i+1]] : mem[i+1];
+				Integer p2 = params[1] == 0 ? mem[mem[i+2]] : mem[i+2];
+				if(p1.equals(Integer.valueOf(0))) {
+					i = p2;
+				} else {
+					i = i+3;
+				}
+			} 
+			
+			//Opcode 7: less than
+			
+			else if(opCode == 7) {
+				Integer p1 = params[2] == 0 ? mem[mem[i+1]] : mem[i+1];
+				Integer p2 = params[1] == 0 ? mem[mem[i+2]] : mem[i+2];
+				
+				if(p1 < p2) {
+					mem[mem[i+3]] = 1;
+				} else {
+					mem[mem[i+3]] = 0;
+				}
+				
+				i = i+4;
+			} 
+			
+			//Opcode 8: equals
+			
+			else if(opCode == 8) {
+				Integer p1 = params[2] == 0 ? mem[mem[i+1]] : mem[i+1];
+				Integer p2 = params[1] == 0 ? mem[mem[i+2]] : mem[i+2];
+				
+				if(p1.equals(p2)) {
+					mem[mem[i+3]] = 1;
+				} else {
+					mem[mem[i+3]] = 0;
+				}
+				
+				i = i+4;
+			} 
+			
 			//OPcode 99: Return
 			
 			else if(opCode == 99) {
