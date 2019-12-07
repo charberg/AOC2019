@@ -4,10 +4,19 @@ public class AmpComputer {	//Differs slightly from our day5 computer, in how it 
 
 	private String[] strMem;
 	private Integer[] mem;
-	private Integer pointer = 0;
+	private Integer i = 0;
 	private int ampInput;
 	private int phase;
 	private int inputCount = 0;
+	private AmpComputer next;
+	private int lastOutput = 0;
+	private boolean isE = false;	//Am I the last amp? only my output counts in part 2.
+	
+	public AmpComputer(int phase, String compInput) {
+		this.loadMem(compInput);
+		this.setPhase(phase);
+		this.phase = phase;
+	}
 	
 	public void loadMem(String input) {
 		strMem = input.split(",");
@@ -15,8 +24,6 @@ public class AmpComputer {	//Differs slightly from our day5 computer, in how it 
 	}
 	
 	public int execute() {
-		
-		int i = 0;
 		
 		while(true) {
 		
@@ -56,13 +63,11 @@ public class AmpComputer {	//Differs slightly from our day5 computer, in how it 
 			
 			else if(opCode == 3) {
 				
-				//First call, use phase. Second call, use input.
+				//First call, use phase. Remaining calls, use input.
 				if(inputCount == 0) {
 					mem[mem[i+1]] = phase;
-				} else if(inputCount == 1){
-					mem[mem[i+1]] = ampInput;
 				} else {
-					System.out.println(String.format("TOO MANY INPUTS: %d", inputCount));
+					mem[mem[i+1]] = ampInput;
 				}
 				inputCount++;
 				i = i+2;
@@ -71,11 +76,15 @@ public class AmpComputer {	//Differs slightly from our day5 computer, in how it 
 			//Opcode 4: Output
 			
 			else if(opCode == 4) {
-				
-				return mem[mem[i+1]];
-				
-				//System.out.println(String.format("Output: %d", mem[mem[i+1]]));
-				//i = i+2;
+				lastOutput = mem[mem[i+1]];
+				next.setAmpInput(lastOutput);
+				i = i+2;	//Move instruction pointer to finish this call before kicking off signal to next
+				int result = next.execute();
+				if(this.isE) {
+					return lastOutput;	//If I'm E, then return my value
+				} else {
+					return result;
+				}
 			} 
 			
 			//Opcode 5: jump if true
@@ -134,9 +143,13 @@ public class AmpComputer {	//Differs slightly from our day5 computer, in how it 
 			
 			//OPcode 99: Return
 			
-			else if(opCode == 99) {
-				System.out.println("Program Complete");
-				return Integer.MIN_VALUE;
+			else if(opCode == 99) {	//New return, return this amps last output
+				System.out.println(String.format("Program Complete, Output: %d", lastOutput));
+				if(this.isE) {
+					return lastOutput;
+				} else {
+					return -999999;
+				}
 			}
 			
 			else {
@@ -173,6 +186,9 @@ public class AmpComputer {	//Differs slightly from our day5 computer, in how it 
 			mem[i] = Integer.parseInt(strMem[i]);
 		}
 		inputCount = 0;
+		i = 0;
+		lastOutput = 0;
+		ampInput = 0;
     }
 	
 	public int getAmpInput() {
@@ -189,6 +205,22 @@ public class AmpComputer {	//Differs slightly from our day5 computer, in how it 
 
 	public void setPhase(int phase) {
 		this.phase = phase;
+	}
+
+	public AmpComputer getNext() {
+		return next;
+	}
+
+	public void setNext(AmpComputer next) {
+		this.next = next;
+	}
+
+	public boolean isE() {
+		return isE;
+	}
+
+	public void setE(boolean isE) {
+		this.isE = isE;
 	}
 
 	

@@ -1,7 +1,10 @@
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,51 +16,59 @@ public class Main7 {
 	public static void main(String[] args) {
 
 
-        try {
-            FileInputStream fstream = new FileInputStream("day7\\resources\\in.txt");
+
+            FileInputStream fstream;
+			try {
+				fstream = new FileInputStream("day7\\resources\\in.txt");
+			
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String strLine = br.readLine();
 
-            PermutationIterator iterator = new PermutationIterator(Arrays.asList(0,1,2,3,4));
+            PermutationIterator iterator = new PermutationIterator(Arrays.asList(5,6,7,8,9));
             List<Integer> phases = iterator.next();
-            
-            LinkedList<Amplifier> amps = new LinkedList<>();
+            List<AmpComputer> amps = new ArrayList<>();
             
             //Init amps
-            for(int i = 0; i < 5; i++) {
-            	amps.add(new Amplifier(phases.get(i), strLine));
+            for(int i = 0; i < phases.size(); i++) {
+            	amps.add(new AmpComputer(phases.get(i), strLine));
+            	if(i > 0) {
+            		amps.get(i-1).setNext(amps.get(i));
+            	}
             }
             
-            amps.get(0).setInput(0);	//Initial input at start of chain
+            amps.get(amps.size()-1).setNext(amps.get(0));	//Circular linked list
+            
+            amps.get(0).setAmpInput(0);	//Initial input at start of chain
+            amps.get(amps.size()-1).setE(true);//Last
             
             int max = Integer.MIN_VALUE;
             
             while(iterator.hasNext()) {
-            	phases = iterator.next();
             	int output = 0;
             	
             	for(int i = 0; i < amps.size(); i++) {
-            		amps.get(i).setPhase(phases.get(i));	//Reload phases and memory
-            		amps.get(i).getComputer().resetMemory();
-            		
-            		//Execute their program
-            		amps.get(i).setInput(output);
-            		output = amps.get(i).getComputer().execute();
+            		amps.get(i).setPhase(phases.get(i));	//Reload phases and memory each permutation
+            		amps.get(i).resetMemory();
             	}
             	
-            	//final output in chain, store if highest
+            	//Execute their program
+        		output = amps.get(0).execute();
+        		
             	if(output > max) {
             		max = output;
             	}
+            	
             	output = 0;
+            	phases = iterator.next();
             }
             
             System.out.println(String.format("Max output: %d", max));
             
-        } catch(Exception e) {
-            System.out.println(e.getMessage());
-        }
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
     }
 	
