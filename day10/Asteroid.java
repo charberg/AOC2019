@@ -4,13 +4,15 @@ import java.util.Set;
 public class Asteroid {
 
 	private Set<Asteroid> canSee;
+	private double distance;
 	private int x;
 	private int y;
 	
-	public Asteroid(int x, int y) {
+	public Asteroid(int x, int y, double distance) {
 		canSee = new HashSet<Asteroid>();
 		this.x = x;
 		this.y = y;
+		this.distance = distance;
 	}
 
 	public Set<Asteroid> getCanSee() {
@@ -41,6 +43,16 @@ public class Asteroid {
 	public void setY(int y) {
 		this.y = y;
 	}
+
+	public double getDistance() {
+		return distance;
+	}
+
+	public void setDistance(double distance) {
+		this.distance = distance;
+	}
+	
+	
 	
 //	@Override
 //	public boolean equals(Object o) {
